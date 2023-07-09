@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::sync::Mutex;
 
 use actix_web::{App, error, get, HttpServer, post, Responder, Result, web};
@@ -89,11 +90,19 @@ async fn minimax(data: web::Data<Mutex<Game>>, info: web::Query<MinimaxRequest>)
 #[derive(Serialize)]
 struct ConfigResponse {
     github_url: String,
+    title: String,
+    related_links: HashMap<String, String>,
 }
 
 #[get("/api/configuration")]
 async fn get_config() -> Result<impl Responder> {
-    Ok(web::Json(ConfigResponse { github_url: String::from("https://github.com/RomainMichau/Connect4Solver_rust") }))
+    Ok(web::Json(ConfigResponse {
+        github_url: String::from("https://github.com/RomainMichau/Connect4Solver_rust"),
+        title: String::from("Connect4 Rust"),
+        related_links: HashMap::from([
+            (String::from("Connect4 Go"), String::from("https://connect4-go.romainmic.com"))
+        ]),
+    }))
 }
 
 
