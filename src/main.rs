@@ -1,11 +1,14 @@
 use std::sync::Mutex;
 
 use actix_web::{App, error, get, HttpServer, post, Responder, Result, web};
-
+use actix_web::middleware::Logger;
+use log::info;
 use serde::Deserialize;
 use serde::Serialize;
+use clap::{App as ClapApp, Arg};
 
 use crate::game::game::{Game};
+
 mod game;
 mod server;
 mod solver;
@@ -81,23 +84,40 @@ async fn reset(data: web::Data<Mutex<Game>>) -> Result<impl Responder> {
 async fn minimax(data: web::Data<Mutex<Game>>, info: web::Query<MinimaxRequest>) -> Result<impl Responder> {
     let mut game = data.lock().unwrap();
     let res = solver::mini_max(&mut game, info.depth, true);
-    Ok(web::Json(MiniMaxResponse{ best_move: res.best_move_id, scores: res.scores }))
+    Ok(web::Json(MiniMaxResponse { best_move: res.best_move_id, scores: res.scores }))
 }
 
 
 #[actix_web::main] // or #[tokio::main]
 async fn main() -> std::io::Result<()> {
-    println!("Hello, world!");
+    env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
+    let port = get_port();
+    info!("Starting server on 0.0.0.0:{port}");
     let game = web::Data::new(Mutex::new(Game::build(6, 7, None)));
     HttpServer::new(move || {
         App::new()
+            .wrap(Logger::default())
             .app_data(game.clone())
             .service(grid)
             .service(add_token)
             .service(reset)
             .service(minimax)
     })
-        .bind(("127.0.0.1", 8081))?
+        .bind(("0.0.0.0", 8081))?
         .run()
         .await
+}
+
+
+fn get_port() -> i16 {
+    let matches = ClapApp::new("connect4")
+        .arg(Arg::with_name("port")
+            .short("p")
+            .long("port")
+            .help("port")
+            .takes_value(true)
+            .default_value("8081"))
+        .get_matches();
+    let port: i16 = matches.value_of("port").unwrap().parse().unwrap();
+    return port;
 }
