@@ -1,3 +1,4 @@
+use rand::Rng;
 use crate::game::game::{Cell, Game};
 
 enum MoveResult {
@@ -48,39 +49,35 @@ pub fn mini_max(game: &mut Game, depth: u8, maximizing_player: bool) -> MiniMaxR
         }
     }
 
-    return if maximizing_player {
-        match scores.iter().enumerate().filter(|(_, x)| **x != MoveResult::ImpossibleMove.score()).max_by(|&(_, x), &(_, y)| x.cmp(y)) {
-            None => {
-                MiniMaxResult {
-                    best_move_id: -1,
-                    move_score: -1,
-                    scores,
-                }
-            }
-            Some((i, score)) => {
-                MiniMaxResult {
-                    best_move_id: i as i8,
-                    move_score: *score,
-                    scores,
-                }
-            }
-        }
+
+    match if maximizing_player {
+        scores.iter().cloned().filter(|&x| x != MoveResult::ImpossibleMove.score()).max()
     } else {
-        match scores.iter().enumerate().filter(|&(_, x)| *x != MoveResult::ImpossibleMove.score()).min_by(|&(_, x), &(_, y)| x.cmp(y)) {
-            None => {
-                MiniMaxResult {
-                    best_move_id: -1,
-                    move_score: -1,
-                    scores,
-                }
-            }
-            Some((i, score)) => {
-                MiniMaxResult {
-                    best_move_id: i as i8,
-                    move_score: *score,
-                    scores,
-                }
+        scores.iter().cloned().filter(|&x| x != MoveResult::ImpossibleMove.score()).min()
+    } {
+        Some(best_value) => {
+            let mut rng = rand::thread_rng();
+
+            let indexes: Vec<usize> = scores.iter()
+                .enumerate()
+                .filter(|&(_, &value)| value == best_value)
+                .map(|(index, _)| index)
+                .collect();
+
+            let rnd = rng.gen_range(0..indexes.len());
+            let random_index = indexes[rnd];
+            MiniMaxResult {
+                best_move_id: random_index as i8,
+                move_score: best_value,
+                scores,
             }
         }
-    };
+        None => {
+            MiniMaxResult {
+                best_move_id: -1,
+                move_score: -1,
+                scores,
+            }
+        }
+    }
 }

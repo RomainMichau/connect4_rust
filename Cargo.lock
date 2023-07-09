@@ -381,6 +381,7 @@ dependencies = [
  "clap",
  "env_logger",
  "log",
+ "rand",
  "serde",
 ]
 

@@ -10,7 +10,6 @@ use clap::{App as ClapApp, Arg};
 use crate::game::game::{Game};
 
 mod game;
-mod server;
 mod solver;
 
 #[derive(Serialize)]
@@ -87,6 +86,16 @@ async fn minimax(data: web::Data<Mutex<Game>>, info: web::Query<MinimaxRequest>)
     Ok(web::Json(MiniMaxResponse { best_move: res.best_move_id, scores: res.scores }))
 }
 
+#[derive(Serialize)]
+struct ConfigResponse {
+    github_url: String,
+}
+
+#[get("/api/configuration")]
+async fn get_config() -> Result<impl Responder> {
+    Ok(web::Json(ConfigResponse { github_url: String::from("https://github.com/RomainMichau/Connect4Solver_rust") }))
+}
+
 
 #[actix_web::main] // or #[tokio::main]
 async fn main() -> std::io::Result<()> {
@@ -102,6 +111,7 @@ async fn main() -> std::io::Result<()> {
             .service(add_token)
             .service(reset)
             .service(minimax)
+            .service(get_config)
     })
         .bind(("0.0.0.0", 8081))?
         .run()
