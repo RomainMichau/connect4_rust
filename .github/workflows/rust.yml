@@ -11,7 +11,7 @@ env:
 
 jobs:
   build:
-
+    name: rust-test
     runs-on: self-hosted
     container:
       image: rust
