@@ -1,3 +1,4 @@
+#Connect4Solver_rust
 Connect4 game with a minimax 'AI'    
 Backend: Rust  
 Game mode:
