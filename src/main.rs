@@ -105,7 +105,6 @@ async fn get_config() -> Result<impl Responder> {
     }))
 }
 
-
 #[actix_web::main] // or #[tokio::main]
 async fn main() -> std::io::Result<()> {
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
