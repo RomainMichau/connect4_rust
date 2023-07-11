@@ -21,10 +21,13 @@ jobs:
       run: cargo build --verbose
     - name: Run tests
       run: cargo test --verbose
-  test_build_docker:
-      name: dockerbuild-test
-      runs-on: self-hosted
-      steps:
+  docker_build:
+    name: docker_build
+    runs-on: self-hosted
+    container:
+      image: docker:dind
+      options: --privileged --group-add 116
+    steps:
       - uses: actions/checkout@v3
-      - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag connect4_rusr:$(date +%s)
+      - name: Build
+        run: docker build -t myimage .
