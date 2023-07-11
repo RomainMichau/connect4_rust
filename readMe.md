@@ -25,6 +25,7 @@ swagger generate spec  -w server -o ./server/specs/spec.json
 swagger generate spec  -w server -o ./server/specs/spec.json   &&  openapi-generator-cli generate -i ./server/specs/spec.json -g typescript-angular -o ./webapp/src/services 
 ```
 
+
 # Run with docker
 ```
  docker build -t connect4 . && docker run -p 8081:8081 connect4:latest
