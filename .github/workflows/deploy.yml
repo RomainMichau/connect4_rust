@@ -3,9 +3,12 @@ on:
     branches: [ "master" ]
 jobs:
   deploy:
-    name: Deploy
-    uses: peter-evans/repository-dispatch@v1
-    with:
-      token: ${{ secrets.REPO_ACCESS_TOKEN }}
-      repository: RomainMichau/rokim_conf
-      event-type: trigger-deploy
+    runs-on: self-hosted
+    name: Trigger rokim_conf repo deploy tash
+    steps:
+      - name: Deploy
+        uses: peter-evans/repository-dispatch@v2.1.1
+        with:
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          repository: RomainMichau/rokim_conf
+          event-type: trigger-deploy
