@@ -77,9 +77,9 @@ pub fn mini_max(game: &mut Game, max_depth: u8, cur_depth: u8, maximizing_player
 
 
     match if maximizing_player {
-        scores.iter().cloned().filter_map(|x| x).max()
+        scores.iter().filter_map(|&x| x).max()
     } else {
-        scores.iter().cloned().filter_map(|x| x).min()
+        scores.iter().filter_map(|&x| x).min()
     } {
         Some(best_value) => {
             let mut rng = rand::thread_rng();
