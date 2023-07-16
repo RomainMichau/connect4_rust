@@ -28,4 +28,4 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build
-        run: docker build -t myimage .
+        run: docker build -t ansible_playbook .
