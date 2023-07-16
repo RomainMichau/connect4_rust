@@ -83,8 +83,13 @@ async fn reset(data: web::Data<Mutex<Game>>) -> Result<impl Responder> {
 #[get("/api/solver/minimax")]
 async fn minimax(data: web::Data<Mutex<Game>>, info: web::Query<MinimaxRequest>) -> Result<impl Responder> {
     let mut game = data.lock().unwrap();
-    let res = solver::mini_max(&mut game, info.depth, true);
-    Ok(web::Json(MiniMaxResponse { best_move: res.best_move_id, scores: res.scores }))
+    let res = solver::mini_max(&mut game, info.depth, 0, true);
+    let displayed_scores = res.move_results.iter()
+        .map(|x|
+            x.clone().map(|y| y.get_display_score()).unwrap_or(-127)
+        )
+        .collect();
+    Ok(web::Json(MiniMaxResponse { best_move: res.best_move_id, scores: displayed_scores }))
 }
 
 #[derive(Serialize)]
