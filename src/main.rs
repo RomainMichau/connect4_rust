@@ -51,7 +51,7 @@ struct TokenResponse {
 #[derive(Serialize)]
 struct MiniMaxResponse {
     best_move: i8,
-    scores: Vec<i8>,
+    scores: Vec<Option<i8>>,
 }
 
 #[post("/api/token")]
@@ -86,7 +86,7 @@ async fn minimax(data: web::Data<Mutex<Game>>, info: web::Query<MinimaxRequest>)
     let res = solver::mini_max(&mut game, info.depth, 0, true);
     let displayed_scores = res.move_results.iter()
         .map(|x|
-            x.clone().map(|y| y.get_display_score()).unwrap_or(-127)
+            x.clone().map(|y| y.get_display_score())
         )
         .collect();
     Ok(web::Json(MiniMaxResponse { best_move: res.best_move_id, scores: displayed_scores }))
@@ -97,6 +97,7 @@ struct ConfigResponse {
     github_url: String,
     title: String,
     related_links: HashMap<String, String>,
+    help: String,
 }
 
 #[get("/api/configuration")]
@@ -107,6 +108,14 @@ async fn get_config() -> Result<impl Responder> {
         related_links: HashMap::from([
             (String::from("Connect4 Go"), String::from("https://connect4-go.romainmic.com"))
         ]),
+        help: "Minimax score are displayed at the top of the grid \n\
+           Lose: -1 * nb to move to lose\n
+           Neutral: 0\n
+           Win: 1 * nb to move to lose.\n
+           Example: \n\
+            Score: 3: Will win in 3 move whatever the opponent do\n
+            Score -5: Will lose in 5 moves if the opponent play the best move \n\
+            Score 0: Will neither win or lose in the next [depth] move if the player play the best moves".to_string(),
     }))
 }
 

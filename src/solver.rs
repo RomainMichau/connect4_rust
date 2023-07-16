@@ -19,6 +19,13 @@ impl MoveResult {
         }
     }
 
+    /// Get the score to display
+    /// Win = 1 * nb of moves to win
+    /// Neutral = 0
+    /// Lost = -1 * nb of moves to lose
+    /// Example: if the AI can win in 3 moves, the score will be 3
+    /// Example: if the AI can lose in 3 moves, the score will be -3
+    /// Example: if the AI can win in 3 moves but lose in 2 moves, the score will be - 2
     pub fn get_display_score(&self) -> i8 {
         match self {
             MoveResult::Lost(x) => { *x as i8 * -1 }
@@ -90,7 +97,7 @@ pub fn mini_max(game: &mut Game, max_depth: u8, cur_depth: u8, maximizing_player
                 best_move_id: random_index as i8,
                 move_score: best_value,
                 move_results,
-                move_result
+                move_result,
             }
         }
         None => {
@@ -98,7 +105,7 @@ pub fn mini_max(game: &mut Game, max_depth: u8, cur_depth: u8, maximizing_player
                 best_move_id: -1,
                 move_score: -1,
                 move_results,
-                move_result: None
+                move_result: None,
             }
         }
     }
