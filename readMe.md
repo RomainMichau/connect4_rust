@@ -1,5 +1,5 @@
 # Connect4Solver_rust
-Connect4 game with a minimax 'AI'    
+Connect4 game with a minimax Solver
 Backend: Rust  
 Game mode:
 - Human VS Human
