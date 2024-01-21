@@ -19,13 +19,3 @@ jobs:
       run: cargo build --verbose
     - name: Run tests
       run: cargo test --verbose
-  docker_build:
-    name: docker_build
-    runs-on: self-hosted
-    container:
-      image: docker:dind
-      options: --privileged --group-add 116
-    steps:
-      - uses: actions/checkout@v3
-      - name: Build
-        run: docker build -t ansible_playbook .
